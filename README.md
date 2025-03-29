@@ -58,23 +58,16 @@ python mainnet_pool.py
 - The pool runs on `http://127.0.0.1:5000`.  
 
 ### **2. Connect Miners**
-#### **Option A: Simulated Miner (Testing)**
-```sh
-python mainnet_miner.py
-```
-- Simulates mining by submitting random shares.  
-
-#### **Option B: Real Miner ([PythonBitcoinMiner](https://github.com/HugoXOX3/PythonBitcoinMiner))**
+SHA256 Miner ([PythonBitcoinMiner](https://github.com/HugoXOX3/PythonBitcoinMiner))**
 1. **Install the miner**:
    ```sh
    git clone https://github.com/HugoXOX3/PythonBitcoinMiner.git
    cd PythonBitcoinMiner
-   pip install -r requirements.txt
    ```
 2. **Configure it to connect to your pool**:
    Edit `miner.py` and replace the pool URL with:
    ```python
-   POOL_URL = "http://127.0.0.1:5000"
+   POOL_URL = "http://127.0.0.1:5000" #or replace the 127.0.0.1 into the ip of you mining pool device
    ```
 3. **Run the miner**:
    ```sh
@@ -86,7 +79,7 @@ python mainnet_miner.py
 ## **📊 Pool Statistics**
 - Check mining stats at:  
   ```sh
-  curl http://127.0.0.1:5000/stats
+  curl http://127.0.0.1:5000/stats #or replace the 127.0.0.1 into the ip of you mining pool device
   ```
 - Example output:
   ```json
