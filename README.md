@@ -7,7 +7,7 @@
 ## **🚀 Features**
 - **Bitcoin Mainnet Support** (Real BTC mining)  
 - **RPC Integration** (Works with Bitcoin Core)  
-- **Simulated & Real Mining** (Supports [PythonBitcoinMiner](https://github.com/HugoXOX3/PythonBitcoinMiner))  
+- **Real Mining** (Supports [PythonBitcoinMiner](https://github.com/HugoXOX3/PythonBitcoinMiner))  
 - **Pool Statistics & Fee System**  
 
 ---
