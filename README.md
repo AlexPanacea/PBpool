@@ -1,4 +1,4 @@
-# **HCMLXOX Solo Mining Pool - Installation and Usage Guide**
+# **PBpool - Installation and Usage Guide**
 
 ## **📋 Table of Contents**
 1. [Requirements](#-requirements)
@@ -31,8 +31,8 @@ The following packages will be automatically installed:
 
 ### **1. Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/hcmlxox-solo-pool.git
-cd hcmlxox-solo-pool
+git clone https://github.com/HugoXOX3/PBpool.git
+cd PBpool
 ```
 
 ### **2. Install Python Dependencies**
@@ -80,13 +80,13 @@ Edit `config.json` with your preferred settings:
 
 Start the mining pool server:
 ```bash
-python solo_pool.py
+python main.py
 ```
 
 The pool will start on port 3333 by default. For production use, consider running it as a service:
 
 ```bash
-nohup python solo_pool.py > pool.log 2>&1 &
+nohup python main.py > pool.log 2>&1 &
 ```
 
 ## **⛏️ Connecting Miners**
@@ -94,7 +94,8 @@ nohup python solo_pool.py > pool.log 2>&1 &
 ### **For ASIC Miners**
 Configure your miner with these settings:
 ```
-Pool URL: http://your-server-ip:3333/getwork/YOUR_BITCOIN_ADDRESS?password=Support_HCMLXOX
+Pool URL: your-server-ip:3333
+Username: your bitcoin address
 Worker: ANY_STRING
 Password: x
 ```
