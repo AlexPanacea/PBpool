@@ -100,18 +100,56 @@ Worker: ANY_STRING
 Password: x
 ```
 
-### **Using the Example Python Miner**
-Edit `miner_client.py`:
-```python
-POOL_URL = "http://your-server-ip:3333"
-MINER_ADDRESS = "your_bitcoin_address_here"
-POOL_PASSWORD = "Support_HCMLXOX"
+#### **How to Run**
+1. Clone [PythonBitcoinMiner](https://github.com/HugoXOX3/PythonBitcoinMiner):
+   ```bash
+   git clone https://github.com/HugoXOX3/PythonBitcoinMiner.git
+   cd PythonBitcoinMiner
+   ```
+
+2. Run with your pool configuration:
+   ```bash
+   python SoloMiner.py
+   ```
+
+### **Key Integration Points**
+1. **Work Fetching**  
+   PythonBitcoinMiner will call `/getwork/<address>` to receive:
+   - Block template (version, previous hash, merkle root, etc.)
+   - Target difficulty
+
+2. **Share Submission**  
+   The miner will submit solutions to `/submit/<address>` with:
+   ```json
+   {
+     "nonce": "discovered_nonce",
+     "hash": "block_header_hash",
+     "height": "current_block_height"
+   }
+   ```
+
+3. **Automatic Payouts**  
+   The pool's existing payout processor will handle rewards as before, sending BTC to the miner's address when thresholds are met.
+
+### **4. Advantages of This Integration**
+- **Compatibility**: PythonBitcoinMiner uses the same HTTP API as your original client.
+- **Performance**: The miner includes optimizations like multi-threading .
+- **Persistence**: Your pool's `miners.json` tracking remains unchanged.
+- **Security**: Password protection (`Support_HCMLXOX`) is still enforced.
+
+### **5. Monitoring Miners**
+Check individual miner stats via the pool's existing endpoint:
+```bash
+curl http://localhost:3333/stats/yourminingaddress?password=Support_HCMLXOX
 ```
 
-Then run:
-```bash
-python miner_client.py
-```
+### **Troubleshooting**
+- If the miner won't connect, verify:
+  - The pool URL includes the miner's Bitcoin address.
+  - The password in `miner_config.json` matches the pool's `join_password`.
+- For slow performance, adjust `threads` in the miner config.
+
+---
 
 ## **📊 Monitoring**
 
