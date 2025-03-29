@@ -205,6 +205,7 @@ cp miners.json.bak miners.json
 - [Stratum Mining Protocol](https://en.bitcoin.it/wiki/Stratum_mining_protocol)
 - [Python Flask Documentation](https://flask.palletsprojects.com/)
 
+**Happy Mining!** ⛏️💰
 
 ## Donations
 
@@ -214,5 +215,18 @@ If you find this project useful, consider supporting it with a Bitcoin donation:
 
 [![Donate Bitcoin](https://img.shields.io/badge/Donate-Bitcoin-orange?logo=bitcoin)](bitcoin:bc1qt7a6vl28czf00vmuse9j7xwpyr7jjt83m2hljh)
 
+## Star History
 
-**Happy Mining!** ⛏️💰
+<a href="https://www.star-history.com/#HugoXOX3/PBpool&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=HugoXOX3/PBpool&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=HugoXOX3/PBpool&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=HugoXOX3/PBpool&type=Date" />
+ </picture>
+</a>
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+
