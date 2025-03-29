@@ -168,7 +168,7 @@ cp miners.json.bak miners.json
 - [Python Flask Documentation](https://flask.palletsprojects.com/)
 
 
-## ** Donations
+## Donations
 
 If you find this project useful, consider supporting it with a Bitcoin donation:
 
