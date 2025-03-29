@@ -157,7 +157,7 @@ def submit_share(address):
     miners[address]['last_share'] = datetime.now().isoformat()
     
     if miners[address]['shares'] % 1000000 == 0:
-        block_reward = 6.25 * (1 - config['pool_fee'])
+        block_reward = 3.125 * (1 - config['pool_fee'])
         miners[address]['blocks'].append({
             'height': data.get('height'),
             'hash': data.get('hash'),
