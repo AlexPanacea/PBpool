@@ -107,7 +107,7 @@ Password: x
    cd PythonBitcoinMiner
    ```
 
-2. Run with your pool configuration:
+2. Run and type in with your pool configuration:
    ```bash
    python SoloMiner.py
    ```
