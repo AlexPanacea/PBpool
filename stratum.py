@@ -212,41 +212,45 @@ class StratumServer:
                 print("No template available for block validation")
                 return False
             
-            # Reconstruct the block header
+            # Reconstruct the block header with miner values
             extranonce1 = f"{hash(client_id) & 0xffffffff:08x}"
             
-            # Build coinbase transaction
+            # Build coinbase transaction with the exact extranonces
             coinbase_tx = self.build_coinbase_tx(template, extranonce1, bytes.fromhex(extra_nonce2), worker_name)
             coinbase_hash = double_sha256(coinbase_tx)
             
             # Calculate merkle root
             merkle_root = build_merkle_root(coinbase_hash, template.get('transactions', []))
             
-            # Build block header
-            header = struct.pack('<L', template['version'])  # version
-            header += bytes.fromhex(template['previousblockhash'])[::-1]  # prev block hash (reversed)
-            header += merkle_root[::-1]  # merkle root (reversed)
-            header += struct.pack('<L', int(ntime, 16))  # timestamp
-            header += bytes.fromhex(template['bits'])[::-1]  # bits (reversed) 
-            header += struct.pack('<L', int(nonce, 16))  # nonce
+            # Build block header with MINER'S submitted values
+            header = struct.pack('<L', template['version'])  # version (little-endian)
+            header += bytes.fromhex(template['previousblockhash'])[::-1]  # prev block hash (reversed for internal format)
+            header += merkle_root[::-1]  # merkle root (reversed for internal format)
+            header += struct.pack('<L', int(ntime, 16))  # Use MINER'S timestamp (little-endian)
+            # Pack bits as little-endian 32-bit integer
+            header += struct.pack('<L', int(template['bits'], 16))  # bits (little-endian)
+            header += struct.pack('<L', int(nonce, 16))  # Use MINER'S nonce (little-endian)
             
             # Calculate block hash
             block_hash = double_sha256(header)
             block_hash_hex = block_hash[::-1].hex()  # Reverse for display
             
-            # Check if this hash meets the NETWORK difficulty (not just pool difficulty)
-            network_target = int(template.get('target', '0' * 64), 16)
-            block_hash_int = int.from_bytes(block_hash, 'big')
+            # Check if this hash meets the NETWORK difficulty
+            # For regtest, the target is very easy (0x207fffff) TODO: adjust for real network
+            network_target = int(template.get('target', '7fffff' + '0' * 56), 16)
+            # Bitcoin compares the hash as a little-endian number
+            block_hash_int = int.from_bytes(block_hash[::-1], 'big')
             
             print(f"Checking block hash: {block_hash_hex[:32]}...")
             print(f"   Network target: {network_target:064x}")
             print(f"   Block hash int: {block_hash_int:064x}")
+            print(f"   Miner nonce: {nonce}, timestamp: {ntime}")
             
             if block_hash_int < network_target:
                 print(f"VALID BLOCK FOUND! Hash meets network difficulty!")
                 
-                # Construct full block
-                full_block = header  # Block header
+                # Construct full block with correct header
+                full_block = header  # Use the header with miner's values
                 
                 # Add transaction count (varint)
                 tx_count = len(template.get('transactions', [])) + 1  # +1 for coinbase
@@ -257,7 +261,7 @@ class StratumServer:
                 else:
                     full_block += b'\xfe' + struct.pack('<L', tx_count)
                 
-                # Add coinbase transaction
+                # Add coinbase transaction (with correct extranonces)
                 full_block += coinbase_tx
                 
                 # Add all other transactions
@@ -268,10 +272,12 @@ class StratumServer:
                 block_hex = full_block.hex()
                 print(f"Submitting block {block_hash_hex} to Bitcoin network...")
                 print(f"   Block size: {len(full_block)} bytes")
+                print(f"   Block header hex: {header.hex()}")
                 
                 return submit_block(block_hex)
             else:
                 print(f"Valid share but not a block (doesn't meet network difficulty)")
+                print(f"   Hash {block_hash_int:064x} >= Target {network_target:064x}")
                 return False
                 
         except Exception as e:
@@ -296,28 +302,29 @@ class StratumServer:
         
         # Coinbase input script: height + extranonce1 + extranonce2 + arbitrary data
         arbitrary_data = b'/stratum/'
-        coinbase_script = height_bytes + extranonce1.encode() + extranonce2 + arbitrary_data
+        # Ensure extranonce1 is bytes
+        if isinstance(extranonce1, str):
+            extranonce1_bytes = bytes.fromhex(extranonce1)
+        else:
+            extranonce1_bytes = extranonce1
+        coinbase_script = height_bytes + extranonce1_bytes + extranonce2 + arbitrary_data
         
         # Build coinbase transaction
         coinbase_tx = struct.pack('<L', 1)  # version
         coinbase_tx += b'\x01'  # input count
         coinbase_tx += b'\x00' * 32  # prev hash (null)
-        coinbase_tx += b'\xff' * 4  # prev index
+        coinbase_tx += b'\xff' * 4  # prev index (0xffffffff)
         coinbase_tx += struct.pack('<B', len(coinbase_script)) + coinbase_script
-        coinbase_tx += b'\xff' * 4  # sequence
+        coinbase_tx += b'\xff\xff\xff\xff'  # sequence
         coinbase_tx += b'\x01'  # output count
         coinbase_tx += struct.pack('<Q', coinbase_value)  # output value
         
-        # Output script (P2PKH to worker address - simplified)
-        if worker_address.startswith(('bc1', 'tb1')):
-            # Bech32 address - simplified P2WPKH
-            script = b'\x19\x76\xa9\x14' + b'\x00' * 20 + b'\x88\xac'
-        else:
-            # Legacy P2PKH
-            script = b'\x19\x76\xa9\x14' + b'\x00' * 20 + b'\x88\xac'
+        # Output script (P2PKH to worker address - simplified for regtest)
+        # For regtest, we'll use a simple P2PKH script
+        script_pubkey = b'\x76\xa9\x14' + b'\x00' * 20 + b'\x88\xac'  # OP_DUP OP_HASH160 <20 bytes> OP_EQUALVERIFY OP_CHECKSIG
         
-        coinbase_tx += struct.pack('<B', len(script)) + script
-        coinbase_tx += b'\x00' * 4  # lock time
+        coinbase_tx += struct.pack('<B', len(script_pubkey)) + script_pubkey
+        coinbase_tx += b'\x00\x00\x00\x00'  # lock time
         
         return coinbase_tx
     
