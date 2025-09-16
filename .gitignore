@@ -3,6 +3,7 @@ lib/
 lib64/
 include/
 pyvenv.cfg
-*.json
-*.bak
 lib64
+miners.json
+miners.json.bak
+config.json
