@@ -1,0 +1,14 @@
+{
+  "pool_port": 5000,
+  "stratum_port": 3333,
+  "join_password": "your_pool_password",
+  "pool_fee": 0.02,
+  "min_payout": 0.001,
+  "payout_interval": 3600,
+  "backup_interval": 1800,
+  "confirmations_required": 100,
+  "rpc_host": "127.0.0.1",
+  "rpc_port": 8332,
+  "rpc_user": "your_bitcoin_rpc_user",
+  "rpc_password": "your_bitcoin_rpc_password"
+}
